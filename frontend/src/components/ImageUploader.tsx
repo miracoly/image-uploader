@@ -8,10 +8,22 @@ function ImageUploader() {
     const [imageUrl, setImageUrl] = useState("");
 
     function handleFileSelection(event: BaseSyntheticEvent) {
-        event.preventDefault()
+
         try {
-            const imageFile: FileList = event.target.files[0];
+            const imageFile: any = event.target.files[0];
             setImageUrl(URL.createObjectURL(imageFile));
+
+            fetch('http://localhost:8080', {
+                method: 'POST',
+                body: imageFile
+            }).then(
+                response => response.json() // if the response is a JSON object
+            ).then(
+                success => console.log(success) // Handle the success response object
+            ).catch(
+                error => console.log(error) // Handle the error response object
+            );
+
         } catch (error) {
             console.log("Error while uploading file");
         }
@@ -35,13 +47,14 @@ function ImageUploader() {
                             <img src={Icon} alt="mountain" id="icon" className="drag-n-drop-image"/>
                             <Typography variant="body2">Drag & Drop your image here</Typography>
                         </Box>
+                        <Typography variant="body1" gutterBottom>or</Typography>
+                        <Button component="label" variant="contained" color="primary">
+                            Choose a File<input type="file" hidden onChange={handleFileSelection}/>
+                        </Button>
                     </>
                 )
             }
-            <Typography variant="body1" gutterBottom>or</Typography>
-            <Button component="label" variant="contained" color="primary">
-                Choose a File<input type="file" hidden onChange={handleFileSelection}/>
-            </Button>
+
         </Box>
     );
 }
